@@ -1,4 +1,5 @@
 const firstPlayer = {
+    id: 1,
     name: 'Mark',
     hp: 80,
     img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
@@ -9,6 +10,7 @@ const firstPlayer = {
 };
 
 const secondPlayer = {
+    id: 2,
     name: 'Ivan',
     hp: 65,
     img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
@@ -20,36 +22,39 @@ const secondPlayer = {
 
 const $arenas = document.querySelector('.arenas');
 
-function createPlayer(playerClass, player) {
-    const $player = document.createElement('div');
-    $player.classList.add(playerClass);
+function createElement(tag, className) {
+    const $tag = document.createElement(tag);
+    if (className) {
+        $tag.classList.add(className);
+    }
+    return $tag;
+}
 
-    const $progressbar = document.createElement('div');
-    $progressbar.classList.add('progressbar');
+function createPlayer(player) {
+    const $player = createElement('div', `player${player.id}`);
 
-    const $life = document.createElement('div');
-    $life.classList.add('life');
+    const $progressbar = createElement('div', 'progressbar');
+
+    const $life = createElement('div', 'life');
     $life.style.width = `${player.hp}%`;
 
-    const $name = document.createElement('div');
-    $name.classList.add('name');
+    const $name = createElement('div', 'name');
     $name.innerText = player.name;
 
     $progressbar.appendChild($life);
     $progressbar.appendChild($name);
     $player.appendChild($progressbar);
 
-    const $character = document.createElement('div');
-    $character.classList.add('character');
+    const $character = createElement('div', 'character');
 
-    const $img = document.createElement('img');
+    const $img = createElement('img');
     $img.src = player.img;
 
     $character.appendChild($img);
     $player.appendChild($character);
 
-    $arenas.appendChild($player);
+    return $player;
 }
 
-createPlayer('player1', firstPlayer);
-createPlayer('player2', secondPlayer);
+$arenas.appendChild(createPlayer(firstPlayer));
+$arenas.appendChild(createPlayer(secondPlayer));
