@@ -1,7 +1,10 @@
+const $arenas = document.querySelector('.arenas');
+const $randomButton = document.querySelector('.button');
+
 const firstPlayer = {
-    id: 1,
+    player: 1,
     name: 'Mark',
-    hp: 80,
+    hp: 100,
     img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
     weapon: ['knife', 'gun'],
     attack: function () {
@@ -10,9 +13,9 @@ const firstPlayer = {
 };
 
 const secondPlayer = {
-    id: 2,
+    player: 2,
     name: 'Ivan',
-    hp: 65,
+    hp: 100,
     img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
     weapon: ['stick', 'gun', 'sword'],
     attack: function () {
@@ -20,7 +23,6 @@ const secondPlayer = {
     }
 };
 
-const $arenas = document.querySelector('.arenas');
 
 function createElement(tag, className) {
     const $tag = document.createElement(tag);
@@ -30,16 +32,16 @@ function createElement(tag, className) {
     return $tag;
 }
 
-function createPlayer(player) {
-    const $player = createElement('div', `player${player.id}`);
+function createPlayer(playerObj) {
+    const $player = createElement('div', `player${playerObj.player}`);
 
     const $progressbar = createElement('div', 'progressbar');
 
     const $life = createElement('div', 'life');
-    $life.style.width = `${player.hp}%`;
+    $life.style.width = `${playerObj.hp}%`;
 
     const $name = createElement('div', 'name');
-    $name.innerText = player.name;
+    $name.innerText = playerObj.name;
 
     $progressbar.appendChild($life);
     $progressbar.appendChild($name);
@@ -48,7 +50,7 @@ function createPlayer(player) {
     const $character = createElement('div', 'character');
 
     const $img = createElement('img');
-    $img.src = player.img;
+    $img.src = playerObj.img;
 
     $character.appendChild($img);
     $player.appendChild($character);
@@ -58,3 +60,30 @@ function createPlayer(player) {
 
 $arenas.appendChild(createPlayer(firstPlayer));
 $arenas.appendChild(createPlayer(secondPlayer));
+
+function changeHP(playerObj) {
+    const $playerObj = document.querySelector('.player' + playerObj.player + ' .life');
+    const remainingHP = playerObj.hp - calculateRandomValue();
+    playerObj.hp = remainingHP <= 0 ? 0 : remainingHP;
+    $playerObj.style.width = `${playerObj.hp}%`;
+
+    if (remainingHP <= 0) {
+        $arenas.appendChild(playerWin(firstPlayer.hp <= 0 ? secondPlayer.name : firstPlayer.name));
+        $randomButton.disabled = true;
+    }
+}
+
+$randomButton.addEventListener('click', function () {
+    changeHP(firstPlayer);
+    changeHP(secondPlayer);
+});
+
+function playerWin(name) {
+    const $winTitle = createElement('div', 'loseTitle');
+    $winTitle.innerText = `${name} win`;
+    return $winTitle;
+}
+
+function calculateRandomValue() {
+    return Math.ceil(Math.random() * 20);
+}
